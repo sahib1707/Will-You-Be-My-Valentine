@@ -286,8 +286,6 @@
 </div>
 
 <script>
-    const MAX_TAUNTS = tauntMessages.length;
-    const SAFE_GAP = 120; // minimum distance from Yes button
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const firstScreen = document.getElementById("firstScreen");
@@ -351,100 +349,120 @@
 
     // NO BUTTON → Grow Yes button and move No button
     let noBtnClickCount = 0;
-    
-    //noBtn.addEventListener("mouseover", () => {
-    //    noHoverCount++;
-      //  attemptCount.textContent = noHoverCount;
+    function moveNoButtonInsideCard() {
+    const card = firstScreen.getBoundingClientRect();
+    const yes = yesBtn.getBoundingClientRect();
+    const no = noBtn.getBoundingClientRect();
+
+    const padding = 20;
+    const minGap = 80;
+
+    let x, y, safe = false;
+
+    while (!safe) {
+        x = Math.random() * (card.width - no.width - padding * 2) + padding;
+        y = Math.random() * (card.height - no.height - padding * 2) + padding;
+
+        const noCX = card.left + x + no.width / 2;
+        const noCY = card.top + y + no.height / 2;
+        const yesCX = yes.left + yes.width / 2;
+        const yesCY = yes.top + yes.height / 2;
+
+        if (Math.hypot(noCX - yesCX, noCY - yesCY) > minGap) {
+            safe = true;
+        }
+    }
+
+    noBtn.style.position = "absolute";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+    noBtn.style.zIndex = "1";
+}
+
+    noBtn.addEventListener("mouseover", () => {
+        noHoverCount++;
+        attemptCount.textContent = noHoverCount;
         
         // Show progress indicator after first hover
-        //if (noHoverCount === 1) {
-//            progressIndicator.style.display = "block";
-  //      }
+        if (noHoverCount === 1) {
+            progressIndicator.style.display = "block";
+        }
 
         // Grow the Yes button progressively
-    //    yesButtonScale += 0.15;
-      //  yesBtn.style.transform = `scale(${yesButtonScale})`;
-        //yesBtn.style.zIndex = "100";
+		yesButtonScale = Math.min(yesButtonScale + 0.1, 1.6);
+yesBtn.style.transform = `scale(${yesButtonScale})`;
+        // yesButtonScale += 0.15;
+        // yesBtn.style.transform = `scale(${yesButtonScale})`;
+        yesBtn.style.zIndex = "100";
         
         // Update Yes button text based on size
-        //if (noHoverCount === 3) {
-          //  yesBtn.textContent = "YES! 💕 (Getting warmer...)";
-        //} else if (noHoverCount === 6) {
-        //    yesBtn.textContent = "YES YES YES! 💕💕";
-        //} else if (noHoverCount === 10) {
-          //  yesBtn.textContent = "OBVIOUSLY YES! 💕💕💕";
-            //yesBtn.style.fontSize = "20px";
-        //}
+        // if (noHoverCount === 3) {
+        //     yesBtn.textContent = "YES! 💕 (Getting warmer...)";
+        // } else if (noHoverCount === 6) {
+        //     yesBtn.textContent = "YES YES YES! 💕💕";
+        // } else if (noHoverCount === 10) {
+        //     yesBtn.textContent = "OBVIOUSLY YES! 💕💕💕";
+        //     yesBtn.style.fontSize = "20px";
+        // }
+		const yesMessages = [
+    "Yes! 💕",
+    "Are you sure? YES 😘",
+    "Come on, say YES 😍",
+    "You know you want to 😏",
+    "OBVIOUSLY YES 💖",
+    "Last chance… YES 😈"
+];
+// Change YES text every 2 NO hovers
+if (noHoverCount % 2 === 0) {
+    const index = Math.floor(noHoverCount / 2) % yesMessages.length;
+    yesBtn.textContent = yesMessages[index];
+}
+
 
         // Start dodging after 2 hovers
-        //if (noHoverCount > 2) {
-          //  // Make No button smaller each time
-            //const newSize = Math.max(0.5, 1 - (noHoverCount * 0.05));
-      //      noBtn.style.transform = `scale(${newSize})`;
-          
-          //  // Move the No button
-        //    noBtn.style.position = "fixed";
-   //         moveNoButtonSafely();
-     //       const padding = 20;
-       //     const btnWidth = noBtn.offsetWidth || 80;
-         //   const btnHeight = noBtn.offsetHeight || 40;
+        if (noHoverCount > 2) {
+            // Make No button smaller each time
+            const newSize = Math.max(0.5, 1 - (noHoverCount * 0.05));
+            noBtn.style.transform = `scale(${newSize})`;
+            moveNoButtonInsideCard();
+            // Move the No button
+            // noBtn.style.position = "fixed";
+            
+            // const padding = 20;
+            // const btnWidth = noBtn.offsetWidth || 80;
+            // const btnHeight = noBtn.offsetHeight || 40;
 
-           // const maxX = window.innerWidth - btnWidth - padding;
-   //         const maxY = window.innerHeight - btnHeight - padding;
+            // const maxX = window.innerWidth - btnWidth - padding;
+            // const maxY = window.innerHeight - btnHeight - padding;
 
-            //const x = padding + Math.random() * (maxX - padding);
-            //const y = padding + Math.random() * (maxY - padding);
+            // const x = padding + Math.random() * (maxX - padding);
+            // const y = padding + Math.random() * (maxY - padding);
 
-     //       noBtn.style.left = `${x}px`;
-       //     noBtn.style.top = `${y}px`;
+            // noBtn.style.left = `${x}px`;
+            // noBtn.style.top = `${y}px`;
             
             // Add shake effect to screen
-   //         if (noHoverCount % 3 === 0) {
-    //            firstScreen.classList.add('shake');
-      //          setTimeout(() => firstScreen.classList.remove('shake'), 500);
-        //    }
-        //}
+            if (noHoverCount % 3 === 0) {
+                firstScreen.classList.add('shake');
+                setTimeout(() => firstScreen.classList.remove('shake'), 500);
+            }
+        }
 
         // Show taunt messages
-  //      if (noHoverCount > 2 && noHoverCount <= 17) {
-    //        showTauntMessage(tauntMessages[noHoverCount - 3]);
-      //  }
+        if (noHoverCount > 2 && noHoverCount <= 17) {
+            showTauntMessage(tauntMessages[noHoverCount - 3]);
+        }
 
         // Make No button nearly impossible to catch
-    //    if (noHoverCount > 8) {
-      //      noBtn.style.transition = "none";
-        //}
+        if (noHoverCount > 8) {
+            noBtn.style.transition = "none";
+        }
         
         // After many attempts, make it super fast
-      //  if (noHoverCount > 12) {
-        //    noBtn.addEventListener("mouseenter", moveButtonAway);
-       // }
-    //});
-
-noBtn.addEventListener("mouseover", () => {
-    noHoverCount++;
-    attemptCount.textContent = noHoverCount;
-
-    if (noHoverCount === 1) {
-        progressIndicator.style.display = "block";
-    }
-
-    yesScale += 0.15;
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    noBtn.style.position = "fixed";
-    moveNoButtonSafely();
-
-    if (noHoverCount <= MAX_TAUNTS) {
-        showTaunt(tauntMessages[noHoverCount - 1]);
-    }
-
-    if (noHoverCount > MAX_TAUNTS) {
-        noBtn.style.transition = "opacity 0.5s ease";
-        noBtn.style.opacity = "0";
-        setTimeout(() => noBtn.style.display = "none", 500);
-    }
-});
+        if (noHoverCount > 12) {
+            noBtn.addEventListener("mouseenter", moveButtonAway);
+        }
+    });
 
     // Additional mouse tracking for very evasive button
     function moveButtonAway(e) {
@@ -463,31 +481,6 @@ noBtn.addEventListener("mouseover", () => {
             noBtn.style.top = `${y}px`;
         }
     }
-
-function moveNoButtonSafely() {
-    const padding = 20;
-    const btnWidth = noBtn.offsetWidth || 80;
-    const btnHeight = noBtn.offsetHeight || 40;
-
-    const yesRect = yesBtn.getBoundingClientRect();
-
-    let x, y;
-    let attempts = 0;
-
-    do {
-        x = padding + Math.random() * (window.innerWidth - btnWidth - padding * 2);
-        y = padding + Math.random() * (window.innerHeight - btnHeight - padding * 2);
-
-        attempts++;
-    } while (
-        Math.abs(x - yesRect.left) < SAFE_GAP &&
-        Math.abs(y - yesRect.top) < SAFE_GAP &&
-        attempts < 20
-    );
-
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top = `${y}px`;
-}
 
     // Prevent clicking No button (just for fun)
     noBtn.addEventListener("click", (e) => {
