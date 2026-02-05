@@ -286,8 +286,8 @@
 </div>
 
 <script>
-    // const MAX_TAUNTS = tauntMessages.length;
-    // const SAFE_GAP = 120; // minimum distance from Yes button
+    const MAX_TAUNTS = tauntMessages.length;
+    const SAFE_GAP = 120; // minimum distance from Yes button
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const firstScreen = document.getElementById("firstScreen");
@@ -351,15 +351,7 @@
 
     // NO BUTTON → Grow Yes button and move No button
     let noBtnClickCount = 0;
-    const MAX_TAUNTS = tauntMessages.length;
-const SAFE_GAP = 120;
-
-/* ---------- Laptop @ 100% check ---------- */
-function isLaptopAt100Percent() {
-    const isDesktopWidth = window.innerWidth >= 1024;
-    const isZoom100 = Math.abs(window.devicePixelRatio - 1) < 0.05;
-    return isDesktopWidth && isZoom100;
-}
+    
     //noBtn.addEventListener("mouseover", () => {
     //    noHoverCount++;
       //  attemptCount.textContent = noHoverCount;
@@ -428,21 +420,8 @@ function isLaptopAt100Percent() {
         //    noBtn.addEventListener("mouseenter", moveButtonAway);
        // }
     //});
-// function isLaptopAt100Percent() {
-//     const isDesktopWidth = window.innerWidth >= 1024;
-//     const isZoom100 = Math.abs(window.devicePixelRatio - 1) < 0.05;
-
-//     return isDesktopWidth && isZoom100;
-// }
-// if (!isLaptopAt100Percent()) {
-//     showTauntMessage("Use a laptop at 100% zoom 😏");
-// }
 
 noBtn.addEventListener("mouseover", () => {
-	if (!isLaptopAt100Percent()) {
-        showTauntMessage("Use a laptop at 100% zoom 😏");
-        return;
-    }
     noHoverCount++;
     attemptCount.textContent = noHoverCount;
 
@@ -450,22 +429,18 @@ noBtn.addEventListener("mouseover", () => {
         progressIndicator.style.display = "block";
     }
 
-    yesButtonScale  += 0.15;
-    yesBtn.style.transform = `scale(${yesButtonScale})`;
+    yesScale += 0.15;
+    yesBtn.style.transform = `scale(${yesScale})`;
 
     noBtn.style.position = "fixed";
     moveNoButtonSafely();
 
     if (noHoverCount <= MAX_TAUNTS) {
-        showTauntMessage(tauntMessages[noHoverCount - 1]);
+        showTaunt(tauntMessages[noHoverCount - 1]);
     }
 
-    // if (noHoverCount > MAX_TAUNTS) {
-    //     noBtn.style.transition = "opacity 0.5s ease";
-    //     noBtn.style.opacity = "0";
-    //     setTimeout(() => noBtn.style.display = "none", 500);
-    // }
-	if (noHoverCount > MAX_TAUNTS) {
+    if (noHoverCount > MAX_TAUNTS) {
+        noBtn.style.transition = "opacity 0.5s ease";
         noBtn.style.opacity = "0";
         setTimeout(() => noBtn.style.display = "none", 500);
     }
@@ -481,33 +456,28 @@ noBtn.addEventListener("mouseover", () => {
             const maxX = window.innerWidth - btnWidth - padding;
             const maxY = window.innerHeight - btnHeight - padding;
 
-            // const x = padding + Math.random() * (maxX - padding);
-            // const y = padding + Math.random() * (maxY - padding);
-			noBtn.style.position = "fixed";
-moveNoButtonSafely();
+            const x = padding + Math.random() * (maxX - padding);
+            const y = padding + Math.random() * (maxY - padding);
 
-
-            // noBtn.style.left = `${x}px`;
-            // noBtn.style.top = `${y}px`;
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
         }
     }
 
 function moveNoButtonSafely() {
     const padding = 20;
-
-    const viewportWidth = document.documentElement.clientWidth;
-    const viewportHeight = document.documentElement.clientHeight;
-
     const btnWidth = noBtn.offsetWidth || 80;
     const btnHeight = noBtn.offsetHeight || 40;
 
     const yesRect = yesBtn.getBoundingClientRect();
 
-    let x, y, attempts = 0;
+    let x, y;
+    let attempts = 0;
 
     do {
-        x = padding + Math.random() * (viewportWidth - btnWidth - padding * 2);
-        y = padding + Math.random() * (viewportHeight - btnHeight - padding * 2);
+        x = padding + Math.random() * (window.innerWidth - btnWidth - padding * 2);
+        y = padding + Math.random() * (window.innerHeight - btnHeight - padding * 2);
+
         attempts++;
     } while (
         Math.abs(x - yesRect.left) < SAFE_GAP &&
@@ -515,14 +485,9 @@ function moveNoButtonSafely() {
         attempts < 20
     );
 
-    // hard clamp
-    x = Math.max(padding, Math.min(x, viewportWidth - btnWidth - padding));
-    y = Math.max(padding, Math.min(y, viewportHeight - btnHeight - padding));
-
-    // noBtn.style.left = `${x}px`;
-    // noBtn.style.top = `${y}px`;
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top = `${y}px`;
 }
-
 
     // Prevent clicking No button (just for fun)
     noBtn.addEventListener("click", (e) => {
@@ -541,8 +506,8 @@ function moveNoButtonSafely() {
         noBtn.style.position = "fixed";
         const x = Math.random() * (window.innerWidth - 100);
         const y = Math.random() * (window.innerHeight - 50);
-        // noBtn.style.left = `${x}px`;
-        // noBtn.style.top = `${y}px`;
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
     });
 
     // Show taunt message
