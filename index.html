@@ -420,6 +420,15 @@
         //    noBtn.addEventListener("mouseenter", moveButtonAway);
        // }
     //});
+function isLaptopAt100Percent() {
+    const isDesktopWidth = window.innerWidth >= 1024;
+    const isZoom100 = Math.abs(window.devicePixelRatio - 1) < 0.05;
+
+    return isDesktopWidth && isZoom100;
+}
+if (!isLaptopAt100Percent()) {
+    showTauntMessage("Use a laptop at 100% zoom 😏");
+}
 
 noBtn.addEventListener("mouseover", () => {
     noHoverCount++;
